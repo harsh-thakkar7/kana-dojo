@@ -86,7 +86,12 @@
   {
     "question": "Which ocean borders Japan to the east?",
     "difficulty": "easy",
-    "answers": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+    "answers": [
+      "Atlantic Ocean",
+      "Indian Ocean",
+      "Pacific Ocean",
+      "Arctic Ocean"
+    ],
     "correctIndex": 2
   },
   {
@@ -128,7 +133,12 @@
   {
     "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior?",
     "difficulty": "easy",
-    "answers": ["Himeji Castle", "Osaka Castle", "Matsumoto Castle", "Nijo Castle"],
+    "answers": [
+      "Himeji Castle",
+      "Osaka Castle",
+      "Matsumoto Castle",
+      "Nijo Castle"
+    ],
     "correctIndex": 0
   },
   {
@@ -398,7 +408,12 @@
   {
     "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior? (Community variation 9)",
     "difficulty": "easy",
-    "answers": ["Himeji Castle", "Osaka Castle", "Matsumoto Castle", "Nijo Castle"],
+    "answers": [
+      "Himeji Castle",
+      "Osaka Castle",
+      "Matsumoto Castle",
+      "Nijo Castle"
+    ],
     "correctIndex": 0
   },
   {
@@ -449,7 +464,7 @@
     "answers": ["Ikebana", "Shodo", "Kodo", "Origami"],
     "correctIndex": 0
   },
-  
+
   {
     "question": "Which city is famous for the Gion Matsuri festival? (Community variation 51)",
     "difficulty": "hard",
@@ -495,7 +510,12 @@
   {
     "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior?",
     "difficulty": "easy",
-    "answers": ["Himeji Castle", "Osaka Castle", "Matsumoto Castle", "Nijo Castle"],
+    "answers": [
+      "Himeji Castle",
+      "Osaka Castle",
+      "Matsumoto Castle",
+      "Nijo Castle"
+    ],
     "correctIndex": 0
   },
   {
@@ -531,99 +551,76 @@
   {
     "question": "What is the Japanese term for a shrine gate? (Community variation 60)",
     "difficulty": "easy",
-    "answers": [
-      "Torii",
-      "Tori",
-      "Toriya",
-      "Torin"
-    ],
+    "answers": ["Torii", "Tori", "Toriya", "Torin"],
     "correctIndex": 0
   },
   {
     "question": "Which Japanese art form involves arranging flowers?",
     "difficulty": "easy",
+    "answers": ["Ikebana", "Origami", "Ukiyo-e", "Shodo"],
+    "correctIndex": 0
+  },
+  {
+    "question": "Which ocean borders Japan to the east? (Community variation 10)",
+    "difficulty": "easy",
     "answers": [
-      "Ikebana",
-      "Origami",
-      "Ukiyo-e",
-      "Shodo"
+      "Atlantic Ocean",
+      "Indian Ocean",
+      "Pacific Ocean",
+      "Arctic Ocean"
+    ],
+    "correctIndex": 2
+  },
+  {
+    "question": "Which animal is famously associated with Inari shrines in Japan?",
+    "difficulty": "easy",
+    "answers": ["Fox", "Crane", "Turtle", "Deer"],
+    "correctIndex": 0
+  },
+  {
+    "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior? (Community variation 9)",
+    "difficulty": "easy",
+    "answers": [
+      "Himeji Castle",
+      "Osaka Castle",
+      "Matsumoto Castle",
+      "Nijo Castle"
     ],
     "correctIndex": 0
   },
   {
-  "question": "Which ocean borders Japan to the east? (Community variation 10)",
-  "difficulty": "easy",
-  "answers": [
-    "Atlantic Ocean",
-    "Indian Ocean",
-    "Pacific Ocean",
-    "Arctic Ocean"
-  ],
-  "correctIndex": 2
-},
+    "question": "Which animal is famously associated with Inari shrines in Japan? (Community variation 33)",
+    "difficulty": "easy",
+    "answers": ["Fox", "Crane", "Turtle", "Deer"],
+    "correctIndex": 0
+  },
   {
-  "question": "Which animal is famously associated with Inari shrines in Japan?",
-  "difficulty": "easy",
-  "answers": [
-    "Fox",
-    "Crane",
-    "Turtle",
-    "Deer"
-  ],
-  "correctIndex": 0
-},{
-  "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior? (Community variation 9)",
-  "difficulty": "easy",
-  "answers": [
-    "Himeji Castle",
-    "Osaka Castle",
-    "Matsumoto Castle",
-    "Nijo Castle"
-  ],
-  "correctIndex": 0
-},{
-  "question": "Which animal is famously associated with Inari shrines in Japan? (Community variation 33)",
-  "difficulty": "easy",
-  "answers": [
-    "Fox",
-    "Crane",
-    "Turtle",
-    "Deer"
-  ],
-  "correctIndex": 0
-},
- {
-  "question": "Which Japanese dish consists of skewered grilled chicken? (Community variation 48)",
-  "difficulty": "easy",
-  "answers": [
-    "Yakitori",
-    "Sukiyaki",
-    "Tonkatsu",
-    "Oden"
-  ],
-  "correctIndex": 0
-},
-{
-  "question": "Which Japanese city is famous for the floating torii gate at Itsukushima Shrine? (Community variation 1)",
-  "difficulty": "easy",
-  "answers": [
-    "Kyoto",
-    "Hiroshima",
-    "Nagasaki",
-    "Kanazawa"
-  ],
-  "correctIndex": 1
-},
-{
-  "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior? (Community variation 9)",
-  "difficulty": "easy",
-  "answers": [
-    "Himeji Castle",
-    "Osaka Castle",
-    "Matsumoto Castle",
-    "Nijo Castle"
-  ],
-  "correctIndex": 0
-}
-
+    "question": "Which Japanese dish consists of skewered grilled chicken? (Community variation 48)",
+    "difficulty": "easy",
+    "answers": ["Yakitori", "Sukiyaki", "Tonkatsu", "Oden"],
+    "correctIndex": 0
+  },
+  {
+    "question": "Which Japanese city is famous for the floating torii gate at Itsukushima Shrine? (Community variation 1)",
+    "difficulty": "easy",
+    "answers": ["Kyoto", "Hiroshima", "Nagasaki", "Kanazawa"],
+    "correctIndex": 1
+  },
+  {
+    "question": "Which Japanese castle is nicknamed the \"White Heron\" for its bright exterior? (Community variation 9)",
+    "difficulty": "easy",
+    "answers": [
+      "Himeji Castle",
+      "Osaka Castle",
+      "Matsumoto Castle",
+      "Nijo Castle"
+    ],
+    "correctIndex": 0
+  },
+  {
+    "question": "Which Japanese food is a savory pancake cooked on a griddle?",
+    "difficulty": "easy",
+    "answers": ["Okonomiyaki", "Tempura", "Yakitori", "Sashimi"],
+    "correctIndex": 0
+  }
 ]
