@@ -168,42 +168,42 @@
     "meaning": "Feel proud. (Set 5)"
   },
   {
-  "japanese": "立つ鳥跡を濁さず",
-  "romaji": "Tatsu tori ato o nigosazu",
-  "english": "A bird leaves no mess",
-  "meaning": "Leave cleanly without trouble. (Set 1)"
-},
+    "japanese": "立つ鳥跡を濁さず",
+    "romaji": "Tatsu tori ato o nigosazu",
+    "english": "A bird leaves no mess",
+    "meaning": "Leave cleanly without trouble. (Set 1)"
+  },
   {
-  "japanese": "耳が早い",
-  "romaji": "Mimi ga hayai",
-  "english": "Fast ears",
-  "meaning": "Quick to hear news/gossip. (Set 1)"
-},
+    "japanese": "耳が早い",
+    "romaji": "Mimi ga hayai",
+    "english": "Fast ears",
+    "meaning": "Quick to hear news/gossip. (Set 1)"
+  },
   {
-  "japanese": "気が短い",
-  "romaji": "Ki ga mijikai",
-  "english": "Short-tempered",
-  "meaning": "Impatient temperament. (Set 6)"
-},
-{
-  "japanese": "気が進まない",
-  "romaji": "Ki ga susumanai",
-  "english": "Spirit doesn't proceed",
-  "meaning": "Not feel like doing it. (Set 6)"
-},
+    "japanese": "気が短い",
+    "romaji": "Ki ga mijikai",
+    "english": "Short-tempered",
+    "meaning": "Impatient temperament. (Set 6)"
+  },
   {
-  "japanese": "足を引っ張る",
-  "romaji": "Ashi o hipparu",
-  "english": "Pull someone back",
-  "meaning": "Hold someone back. (Set 3)"
-},
+    "japanese": "気が進まない",
+    "romaji": "Ki ga susumanai",
+    "english": "Spirit doesn't proceed",
+    "meaning": "Not feel like doing it. (Set 6)"
+  },
   {
-  "japanese": "藪蛇",
-  "romaji": "Yabuhebi",
-  "english": "Poke the bush, get the snake",
-  "meaning": "An attempt to hurt someone backfires and causes more trouble for yourself"
-},
-   {
+    "japanese": "足を引っ張る",
+    "romaji": "Ashi o hipparu",
+    "english": "Pull someone back",
+    "meaning": "Hold someone back. (Set 3)"
+  },
+  {
+    "japanese": "藪蛇",
+    "romaji": "Yabuhebi",
+    "english": "Poke the bush, get the snake",
+    "meaning": "An attempt to hurt someone backfires and causes more trouble for yourself"
+  },
+  {
     "japanese": "石の上にも三年",
     "romaji": "Ishi no ue ni mo sannen",
     "english": "Three years on a stone",
@@ -216,15 +216,21 @@
     "meaning": "Obtain something. (Set 2)"
   },
   {
-  "japanese": "気が短い",
-  "romaji": "Ki ga mijikai",
-  "english": "Short-tempered",
-  "meaning": "Impatient temperament. (Set 2)"
+    "japanese": "気が短い",
+    "romaji": "Ki ga mijikai",
+    "english": "Short-tempered",
+    "meaning": "Impatient temperament. (Set 2)"
   },
   {
     "japanese": "顔が広い",
     "romaji": "Kao ga hiroi",
     "english": "Wide face",
     "meaning": "Have many connections. (Set 4)"
+  },
+  {
+    "japanese": "足を引っ張る",
+    "romaji": "Ashi o hipparu",
+    "english": "Pull someone back",
+    "meaning": "Hold someone back. (Set 5)"
   }
 ]
