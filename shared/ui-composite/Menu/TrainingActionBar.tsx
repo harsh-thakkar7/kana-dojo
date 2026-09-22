@@ -17,6 +17,21 @@ import { useScrollVisibility } from '@/shared/hooks/generic/useScrollVisibility'
 import { useAutoLearningStore } from '@/features/Progress';
 import { useRouter } from '@/core/i18n/routing';
 import { resolveClassicGoAction } from './trainingAction';
+import { clearAutoLearningHandoff } from '@/features/Progress/lib/autoLearningHandoff';
+
+const startManualSelection = (
+  currentDojo: string,
+  router: ReturnType<typeof useRouter>,
+) => {
+  clearAutoLearningHandoff();
+  if (currentDojo === 'kanji') {
+    router.push('/kanji/learn');
+  } else if (currentDojo === 'vocabulary') {
+    router.push('/vocabulary/learn');
+  } else {
+    router.push('/kana/learn');
+  }
+};
 
 const TRAINING_ACTION_CLASSIC_FLOAT_CLASSES = '';
 // 'motion-safe:animate-float [--float-distance:-3px] delay-200ms';
@@ -92,14 +107,13 @@ const TrainingActionBar: React.FC<ITopBarProps> = ({
       if (event.key === 'Enter' && isFilled) {
         event.preventDefault();
         const action = resolveClassicGoAction({
-          currentDojo,
           isFilled,
           showExperimentalModes,
         });
         if (action === 'game-modes-modal') {
           setShowGameModesModal(true);
         } else if (action === 'manual-selection') {
-          router.push('/vocabulary/learn');
+          startManualSelection(currentDojo, router);
         } else {
           startAutoLearning();
         }
@@ -360,7 +374,6 @@ const TrainingActionBar: React.FC<ITopBarProps> = ({
               colorScheme: 'primary' as const,
               onClick: () => {
                 const action = resolveClassicGoAction({
-                  currentDojo,
                   isFilled,
                   showExperimentalModes,
                 });
@@ -370,7 +383,7 @@ const TrainingActionBar: React.FC<ITopBarProps> = ({
                   return;
                 }
                 if (action === 'manual-selection') {
-                  router.push('/vocabulary/learn');
+                  startManualSelection(currentDojo, router);
                   return;
                 }
 
