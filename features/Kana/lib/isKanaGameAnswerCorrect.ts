@@ -1,4 +1,5 @@
 import type { KanaCharacter } from './flattenKanaGroup';
+import { areKanaReadingsEqual } from './kanaReadingKey';
 
 /**
  * Shared answer check for the Kana game modes (Blitz, Gauntlet, ...).
@@ -17,7 +18,7 @@ export const isKanaGameAnswerCorrect = (
   isReverse: boolean | undefined,
 ): boolean => {
   if (isReverse) {
-    return answer.replace(/\s+/g, '') === question.kana;
+    return areKanaReadingsEqual(answer, question.kana);
   }
   const normalized = answer.replace(/\s+/g, '').toLowerCase();
   return (

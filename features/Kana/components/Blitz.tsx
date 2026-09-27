@@ -11,6 +11,7 @@ import { getSelectionLabels } from '@/shared/utils/selectionFormatting';
 import { shuffle } from '@/shared/utils/shuffle';
 import Blitz, { type BlitzConfig } from '@/shared/ui-composite/Blitz';
 import { getUniqueIncorrectOptions } from '@/features/Kana/lib/getUniqueIncorrectOptions';
+import { kanaReadingKey } from '@/features/Kana/lib/kanaReadingKey';
 
 export default function BlitzKana() {
   const kanaGroupIndices = useKanaStore(state => state.kanaGroupIndices);
@@ -67,6 +68,7 @@ export default function BlitzKana() {
           correctAnswer,
           shuffle(items).map(item => item.kana),
           count - 1,
+          kanaReadingKey,
         );
         return [correctAnswer, ...incorrectOptions];
       }

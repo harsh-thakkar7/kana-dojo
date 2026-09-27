@@ -6,15 +6,17 @@ export const getUniqueIncorrectOptions = (
   correctAnswer: string,
   candidates: readonly string[],
   count: number,
+  keyOf: (value: string) => string = value => value,
 ): string[] => {
-  const seen = new Set([correctAnswer]);
+  const seen = new Set([keyOf(correctAnswer)]);
   const options: string[] = [];
 
   for (const candidate of candidates) {
     if (options.length >= count) break;
-    if (seen.has(candidate)) continue;
+    const key = keyOf(candidate);
+    if (seen.has(key)) continue;
 
-    seen.add(candidate);
+    seen.add(key);
     options.push(candidate);
   }
 

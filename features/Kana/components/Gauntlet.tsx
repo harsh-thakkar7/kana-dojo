@@ -10,6 +10,7 @@ import { getSelectionLabels } from '@/shared/utils/selectionFormatting';
 import { shuffle } from '@/shared/utils/shuffle';
 import Gauntlet, { type GauntletConfig } from '@/shared/ui-composite/Gauntlet';
 import { getUniqueIncorrectOptions } from '@/features/Kana/lib/getUniqueIncorrectOptions';
+import { kanaReadingKey } from '@/features/Kana/lib/kanaReadingKey';
 
 interface GauntletKanaProps {
   onCancel?: () => void;
@@ -52,6 +53,7 @@ const GauntletKana: React.FC<GauntletKanaProps> = ({ onCancel }) => {
           correctAnswer,
           shuffle(items).map(item => item.kana),
           count - 1,
+          kanaReadingKey,
         );
         return [correctAnswer, ...incorrectOptions];
       }

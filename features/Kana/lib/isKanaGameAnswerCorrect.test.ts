@@ -40,4 +40,29 @@ describe('isKanaGameAnswerCorrect', () => {
     expect(isKanaGameAnswerCorrect(shi, ' し ', true)).toBe(true);
     expect(isKanaGameAnswerCorrect(shi, 'shi', true)).toBe(false);
   });
+
+  it('accepts the same reading entered in the opposite script in reverse mode', () => {
+    // Regression #28638: with both hiragana and katakana groups selected, a
+    // katakana tile is the same reading as a hiragana answer and vice versa.
+    const yo = { kana: 'よ', romaji: 'yo', altRomanji: [] };
+    expect(isKanaGameAnswerCorrect(yo, 'ヨ', true)).toBe(true);
+    expect(
+      isKanaGameAnswerCorrect(
+        { kana: 'ヨ', romaji: 'yo', altRomanji: [] },
+        'よ',
+        true,
+      ),
+    ).toBe(true);
+    expect(
+      isKanaGameAnswerCorrect(
+        { kana: 'りゅ', romaji: 'ryu', altRomanji: [] },
+        'リュ',
+        true,
+      ),
+    ).toBe(true);
+  });
+
+  it('still rejects the opposite script for a different reading', () => {
+    expect(isKanaGameAnswerCorrect(shi, 'サ', true)).toBe(false);
+  });
 });

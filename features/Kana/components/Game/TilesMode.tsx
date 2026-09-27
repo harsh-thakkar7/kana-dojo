@@ -21,6 +21,10 @@ import { useGameStats } from '@/shared/hooks/game/useGameStats';
 import { useTilesModeHandlers } from '@/shared/hooks/game/useTilesModeHandlers';
 import { useTilesModeState } from '@/shared/hooks/game/useTilesModeState';
 import { getKanaTilesQuestionShape } from '@/features/Kana/lib/getKanaTilesQuestionShape';
+import {
+  areKanaReadingsEqual,
+  kanaReadingKey,
+} from '@/features/Kana/lib/kanaReadingKey';
 
 import { GameBottomBar } from '@/shared/ui-composite/Game/GameBottomBar';
 import { cn } from '@/shared/utils/utils';
@@ -221,14 +225,18 @@ const KanaTilesMode = ({
     const distractorCount = Math.max(0, totalTileCount - answerChars.length);
     const distractorSource = isReverse ? selectedKana : selectedRomaji;
     const distractors: string[] = [];
-    const usedAnswers = new Set(answerChars);
+    const readingUsed = isReverse
+      ? new Set(answerChars.map(kanaReadingKey))
+      : new Set(answerChars);
     for (let i = 0; i < distractorCount; i++) {
+      const keyOf = isReverse ? kanaReadingKey : (c: string) => c;
       const available = distractorSource.filter(
-        c => !usedAnswers.has(c) && !distractors.includes(c),
+        c => !readingUsed.has(keyOf(c)),
       );
       if (available.length === 0) break;
       const selected = available[random.integer(0, available.length - 1)];
       distractors.push(selected);
+      readingUsed.add(keyOf(selected));
     }
 
     const sortedTiles = [...answerChars, ...distractors].sort(
@@ -296,6 +304,7 @@ const KanaTilesMode = ({
     if (!hasInitializedResetRef.current) {
       hasInitializedResetRef.current = true;
       previousWordLengthRef.current = wordLength;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       resetGame();
       return;
     }
@@ -339,8 +348,8 @@ const KanaTilesMode = ({
       const placedArray = placedTileIds.map(
         id => wordData.allTiles.get(id) ?? '',
       );
-      isCorrect = placedArray.every(
-        (tile, i) => tile === wordData.answerChars[i],
+      isCorrect = placedArray.every((tile, i) =>
+        areKanaReadingsEqual(tile, wordData.answerChars[i]),
       );
     }
 

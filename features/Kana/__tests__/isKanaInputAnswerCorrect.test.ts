@@ -96,7 +96,7 @@ describe('isKanaInputAnswerCorrect', () => {
     ).toBe(false);
   });
 
-  it('accepts only exact kana in reverse mode', () => {
+  it('accepts the exact kana in reverse mode regardless of script', () => {
     expect(
       isKanaInputAnswerCorrect({
         inputValue: 'し',
@@ -110,6 +110,18 @@ describe('isKanaInputAnswerCorrect', () => {
     expect(
       isKanaInputAnswerCorrect({
         inputValue: ' シ ',
+        correctChar: 'shi',
+        targetChar: 'し',
+        isReverse: true,
+        altRomanjiMap,
+      }),
+    ).toBe(true);
+  });
+
+  it('rejects romaji input in reverse mode', () => {
+    expect(
+      isKanaInputAnswerCorrect({
+        inputValue: 'shi',
         correctChar: 'shi',
         targetChar: 'し',
         isReverse: true,
@@ -203,7 +215,7 @@ describe('isKanaInputAnswerCorrect', () => {
     ).toBe(true);
   });
 
-  it('keeps reverse multi-character matching exact and normalized', () => {
+  it('keeps reverse multi-character matching normalized and script-insensitive', () => {
     expect(
       isKanaInputAnswerCorrect({
         inputValue: ' シツ ',
@@ -226,7 +238,7 @@ describe('isKanaInputAnswerCorrect', () => {
         promptParts: ['shi', 'tsu'],
         answerParts: ['シ', 'ツ'],
       }),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('accepts whitespace between kana in reverse mode', () => {

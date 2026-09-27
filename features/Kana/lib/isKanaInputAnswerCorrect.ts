@@ -1,3 +1,5 @@
+import { areKanaReadingsEqual } from './kanaReadingKey';
+
 interface KanaInputAnswerOptions {
   inputValue: string;
   correctChar: string;
@@ -54,7 +56,7 @@ export const isKanaInputAnswerCorrect = ({
 
   if (isReverse) {
     // Reverse mode: user types the kana character itself.
-    return normalizedInput === targetChar.replace(/\s+/g, '').normalize('NFC');
+    return areKanaReadingsEqual(normalizedInput, targetChar);
   }
 
   // Normal mode: user types romaji. Compare case- and Unicode-insensitively.
@@ -77,7 +79,11 @@ export const isKanaInputAnswerCorrect = ({
     promptParts.length > 0 &&
     promptParts.length === answerParts.length
   ) {
-    const validAnswers = buildAltCombinations(promptParts, answerParts, altRomanjiMap);
+    const validAnswers = buildAltCombinations(
+      promptParts,
+      answerParts,
+      altRomanjiMap,
+    );
     return validAnswers.some(
       ans => lowerInput === ans.toLowerCase().normalize('NFC'),
     );
@@ -86,6 +92,8 @@ export const isKanaInputAnswerCorrect = ({
   // Legacy single-character fallback (promptParts not provided).
   const alternatives = altRomanjiMap.get(correctChar);
   return alternatives
-    ? alternatives.some(alt => lowerInput === alt.toLowerCase().normalize('NFC'))
+    ? alternatives.some(
+        alt => lowerInput === alt.toLowerCase().normalize('NFC'),
+      )
     : false;
 };
