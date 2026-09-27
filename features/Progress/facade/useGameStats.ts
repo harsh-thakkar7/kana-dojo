@@ -46,10 +46,21 @@ export function useGameStats(): GameStatsActions {
       'correct',
       (event: StatEvent) => {
         store.incrementCorrectAnswers();
+        // Vocabulary Input/Reverse-Input modes report through the events
+        // facade; count toward vocabulary stats like the direct-hook modes
+        // (Pick/MCQ/Tiles) do (#27161).
+        if (event.contentType === 'vocabulary') {
+          store.incrementVocabularyCorrect();
+        }
         // Update character history based on content type
         if (event.character) {
           store.addCharacterToHistory(event.character);
           store.incrementCharacterScore(event.character, 'correct');
+        }
+        // Speed tracking (Requirements 6.x): forward the answer time the game
+        // emits in metadata so these modes feed fastest/avg speed stats (#27161).
+        if (event.metadata?.timeTaken != null) {
+          store.recordAnswerTime(event.metadata.timeTaken);
         }
 
         // Trigger achievement progress check for correct answers
@@ -79,7 +90,7 @@ export function useGameStats(): GameStatsActions {
       unsubIncorrect();
       unsubSession();
     };
-  }, [store]);
+  }, [store, checkForAchievementProgress]);
 
   return {
     recordCorrect: statsApi.recordCorrect,
