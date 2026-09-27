@@ -105,7 +105,14 @@ jobs:
                 return null;
               }
 
-              const eligible = items;
+              // The predicate decides whether an item may still be issued
+              // (not already issued/completed, content not already present in
+              // the target file). Only eligible items may be returned, or the
+              // workflow would re-open issues for content that is already on
+              // main or has already been created.
+              const eligible = items.filter(function(item) {
+                return predicate ? predicate(item) : true;
+              });
 
               if (eligible.length === 0) {
                 return null;
@@ -113,6 +120,95 @@ jobs:
 
               const randomIndex = Math.floor(Math.random() * eligible.length);
               return eligible[randomIndex];
+            }
+
+            // Content files only carry stable ids for themes. Object-based
+            // types are therefore matched on the identifying fields, and the
+            // string-array types (facts, grammar) on an exact trimmed match,
+            // so an entry that already exists on main never becomes an issue.
+            function contentAlreadyExists(nextType, item) {
+              if (!item || typeof item !== 'object') {
+                return false;
+              }
+              switch (nextType) {
+                case 'theme':
+                  return Array.isArray(existingThemes) && existingThemes.some(function(th) {
+                    return th && typeof th === 'object' && th.id === item.id;
+                  });
+                case 'fact':
+                  return Array.isArray(existingFacts) && existingFacts.some(function(f) {
+                    return typeof f === 'string' && f.trim() === String(item.fact || '').trim();
+                  });
+                case 'proverb':
+                  return Array.isArray(existingProverbs) && existingProverbs.some(function(p) {
+                    return p && typeof p === 'object' && p.japanese === item.japanese && p.romaji === item.romaji && p.english === item.english;
+                  });
+                case 'haiku':
+                  return Array.isArray(existingHaiku) && existingHaiku.some(function(h) {
+                    return h && typeof h === 'object' && h.japanese === item.japanese && h.romaji === item.romaji && h.english === item.english;
+                  });
+                case 'trivia':
+                  return Array.isArray(existingTrivia) && existingTrivia.some(function(q) {
+                    return q && typeof q === 'object' && q.question === item.question;
+                  });
+                case 'grammar':
+                  return Array.isArray(existingGrammar) && existingGrammar.some(function(g) {
+                    return typeof g === 'string' && g.trim() === String(item.text || '').trim();
+                  });
+                case 'animeQuote':
+                  return Array.isArray(existingAnimeQuotes) && existingAnimeQuotes.some(function(q) {
+                    return q && typeof q === 'object' && q.japanese === item.japanese && q.anime === item.anime && q.character === item.character;
+                  });
+                case 'videoGameQuote':
+                  return Array.isArray(existingVideoGameQuotes) && existingVideoGameQuotes.some(function(q) {
+                    return q && typeof q === 'object' && q.japanese === item.japanese && q.game === item.game && q.character === item.character;
+                  });
+                default:
+                  return false;
+              }
+            }
+
+            // Every issue body is templated from the backlog item plus the
+            // type template (file link, item type label). If either is missing
+            // a field the body depends on, the run would template the literal
+            // string "undefined" into the issue, so bail out instead and let
+            // the loop try the next type.
+            const payloadRequiredFields = {
+              theme: ['id', 'name'],
+              fact: ['id', 'fact'],
+              proverb: ['id', 'japanese', 'romaji', 'english', 'meaning'],
+              haiku: ['id', 'japanese', 'romaji', 'english', 'poet', 'season', 'kigo', 'notes'],
+              trivia: ['id', 'question', 'answers', 'correctIndex'],
+              grammar: ['id', 'text'],
+              animeQuote: ['id', 'japanese', 'romaji', 'english', 'anime', 'character'],
+              videoGameQuote: ['id', 'japanese', 'romaji', 'english', 'game', 'character'],
+              idiom: ['id', 'japanese', 'romaji', 'english', 'meaning'],
+              regionalDialect: ['id', 'dialect', 'standardJapanese', 'english', 'region', 'note'],
+              falseFriend: ['id', 'termA', 'termB', 'explanation', 'example'],
+              culturalEtiquette: ['id', 'situation', 'do', 'dont', 'note'],
+              exampleSentence: ['id', 'japanese', 'romaji', 'english', 'jlpt'],
+              commonMistake: ['id', 'wrong', 'correct', 'explanation'],
+              wallpaperUrl: ['id', 'url'],
+              communityNote: ['id', 'file', 'position', 'text'],
+            };
+
+            function hasUsableIssuePayload(nextType, item) {
+              const tmpl = t[nextType];
+              if (!tmpl || !item || typeof item !== 'object') {
+                return false;
+              }
+              // Only community note issues carry their own file path on the
+              // item; every other type needs the template's file link.
+              if (
+                nextType !== 'communityNote' &&
+                (typeof tmpl.file !== 'string' || typeof tmpl.itemType !== 'string')
+              ) {
+                return false;
+              }
+              const required = payloadRequiredFields[nextType];
+              return Array.isArray(required) && required.every(function(field) {
+                return item[field] !== undefined && item[field] !== null;
+              });
             }
 
             async function resolveMilestoneNumber() {
@@ -396,6 +492,9 @@ jobs:
                 if (th.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('theme', th)) {
+                  return false;
+                }
                 return true;
               });
               
@@ -404,6 +503,11 @@ jobs:
                 if (backlogChanged) {
                   fs.writeFileSync(themeBacklogPath, JSON.stringify(themes, null, 2));
                 }
+                continue;
+              }
+              
+              if (!hasUsableIssuePayload('theme', item)) {
+                console.log(`Skipping theme "${item.name}": backlog item is missing template fields.`);
                 continue;
               }
               
@@ -440,6 +544,9 @@ jobs:
                 if (f.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('fact', f)) {
+                  return false;
+                }
                 return true;
               });
               
@@ -450,6 +557,11 @@ jobs:
                   fs.writeFileSync(factsBacklogPath, JSON.stringify(facts, null, 2));
                   fs.writeFileSync(proverbsBacklogPath, JSON.stringify(proverbs, null, 2));
                 }
+                continue;
+              }
+              
+              if (!hasUsableIssuePayload('fact', item)) {
+                console.log(`Skipping fact "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
               
@@ -484,6 +596,9 @@ jobs:
                 if (p.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('proverb', p)) {
+                  return false;
+                }
                 return true;
               });
               
@@ -494,6 +609,11 @@ jobs:
                   fs.writeFileSync(factsBacklogPath, JSON.stringify(facts, null, 2));
                   fs.writeFileSync(proverbsBacklogPath, JSON.stringify(proverbs, null, 2));
                 }
+                continue;
+              }
+              
+              if (!hasUsableIssuePayload('proverb', item)) {
+                console.log(`Skipping proverb "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
               
@@ -529,6 +649,9 @@ jobs:
                 if (h.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('haiku', h)) {
+                  return false;
+                }
                 return true;
               });
 
@@ -537,6 +660,11 @@ jobs:
                 if (backlogChanged) {
                   fs.writeFileSync(haikuBacklogPath, JSON.stringify(haiku, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('haiku', item)) {
+                console.log(`Skipping haiku "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -568,6 +696,9 @@ jobs:
                 if (q.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('trivia', q)) {
+                  return false;
+                }
                 return true;
               });
 
@@ -580,6 +711,11 @@ jobs:
                   fs.writeFileSync(triviaBacklogPath, JSON.stringify(trivia, null, 2));
                   fs.writeFileSync(grammarBacklogPath, JSON.stringify(grammar, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('trivia', item)) {
+                console.log(`Skipping trivia "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -615,6 +751,9 @@ jobs:
                 if (g.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('grammar', g)) {
+                  return false;
+                }
                 return true;
               });
 
@@ -627,6 +766,11 @@ jobs:
                   fs.writeFileSync(triviaBacklogPath, JSON.stringify(trivia, null, 2));
                   fs.writeFileSync(grammarBacklogPath, JSON.stringify(grammar, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('grammar', item)) {
+                console.log(`Skipping grammar point "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -660,6 +804,9 @@ jobs:
                 if (q.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('animeQuote', q)) {
+                  return false;
+                }
                 return true;
               });
 
@@ -673,6 +820,11 @@ jobs:
                   fs.writeFileSync(grammarBacklogPath, JSON.stringify(grammar, null, 2));
                   fs.writeFileSync(animeQuotesBacklogPath, JSON.stringify(animeQuotes, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('animeQuote', item)) {
+                console.log(`Skipping anime quote "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -705,6 +857,9 @@ jobs:
                 if (q.issued) {
                   return false;
                 }
+                if (contentAlreadyExists('videoGameQuote', q)) {
+                  return false;
+                }
                 return true;
               });
 
@@ -713,6 +868,11 @@ jobs:
                 if (backlogChanged) {
                   fs.writeFileSync(videoGameQuotesBacklogPath, JSON.stringify(videoGameQuotes, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('videoGameQuote', item)) {
+                console.log(`Skipping video game quote "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -763,6 +923,11 @@ jobs:
                 if (backlogChanged) {
                   fs.writeFileSync(idiomsBacklogPath, JSON.stringify(idioms, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('idiom', item)) {
+                console.log(`Skipping idiom "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -817,6 +982,11 @@ jobs:
                 continue;
               }
 
+              if (!hasUsableIssuePayload('regionalDialect', item)) {
+                console.log(`Skipping regional dialect "${item.id}": backlog item is missing template fields.`);
+                continue;
+              }
+
               const duplicateDialect = await hasOpenIssueForQuery(`"Regional Dialect Entry" "${item.id}"`);
 
               if (duplicateDialect) {
@@ -865,6 +1035,11 @@ jobs:
                 if (backlogChanged) {
                   fs.writeFileSync(falseFriendsBacklogPath, JSON.stringify(falseFriends, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('falseFriend', item)) {
+                console.log(`Skipping false friend "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -917,6 +1092,11 @@ jobs:
                 continue;
               }
 
+              if (!hasUsableIssuePayload('culturalEtiquette', item)) {
+                console.log(`Skipping cultural etiquette "${item.id}": backlog item is missing template fields.`);
+                continue;
+              }
+
               const duplicateEtiquette = await hasOpenIssueForQuery(`"Cultural Etiquette Tip" "${item.id}"`);
               if (duplicateEtiquette) {
                 const etiquetteIdx = culturalEtiquette.findIndex(function(e) { return e.id === item.id; });
@@ -963,6 +1143,11 @@ jobs:
                 if (backlogChanged) {
                   fs.writeFileSync(exampleSentencesBacklogPath, JSON.stringify(exampleSentences, null, 2));
                 }
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('exampleSentence', item)) {
+                console.log(`Skipping example sentence "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
@@ -1015,6 +1200,11 @@ jobs:
                 continue;
               }
 
+              if (!hasUsableIssuePayload('commonMistake', item)) {
+                console.log(`Skipping common mistake "${item.id}": backlog item is missing template fields.`);
+                continue;
+              }
+
               const duplicateMistake = await hasOpenIssueForQuery(`"Common Learner Mistake" "${item.id}"`);
               if (duplicateMistake) {
                 const mistakeIdx = commonMistakes.findIndex(function(m) { return m.id === item.id; });
@@ -1056,6 +1246,11 @@ jobs:
                 continue;
               }
 
+              if (!hasUsableIssuePayload('wallpaperUrl', item)) {
+                console.log(`Skipping wallpaper URL "${item.id}": backlog item is missing template fields.`);
+                continue;
+              }
+
               const duplicateWallpaperUrl = await hasOpenIssueForQuery(`"Wallpaper URL #${item.id}"`);
               if (duplicateWallpaperUrl) {
                 const urlIdx = wallpaperUrls.findIndex(function(entry) { return entry.id === item.id; });
@@ -1094,6 +1289,11 @@ jobs:
 
               if (!item) {
                 console.log('No more community note items available in backlog.');
+                continue;
+              }
+
+              if (!hasUsableIssuePayload('communityNote', item)) {
+                console.log(`Skipping community note "${item.id}": backlog item is missing template fields.`);
                 continue;
               }
 
