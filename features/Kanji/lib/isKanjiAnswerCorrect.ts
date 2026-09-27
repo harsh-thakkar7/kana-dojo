@@ -1,11 +1,15 @@
 import type { IKanjiObj } from '@/entities/kanji';
+import { toHiragana } from 'wanakana';
 import {
   normalizeAnswerValue,
   normalizeMeaningAnswer,
 } from '@/shared/utils/meanings';
 
-const normalizeReading = (value: string): string =>
-  normalizeAnswerValue(value.split(' ')[0] ?? '');
+const readingKey = (value: string): string =>
+  toHiragana(normalizeAnswerValue(value));
+
+const normalizeReading = (reading: string): string =>
+  readingKey(reading.split(' ')[0] ?? '');
 
 export const isKanjiAnswerCorrect = (
   kanji: IKanjiObj,
@@ -26,10 +30,10 @@ export const isKanjiAnswerCorrect = (
   return (
     normalizeAnswerValue(kanji.kanjiChar) === normalizedAnswer ||
     kanji.kunyomi.some(
-      reading => normalizeReading(reading) === normalizedAnswer,
+      reading => normalizeReading(reading) === readingKey(normalizedAnswer),
     ) ||
     kanji.onyomi.some(
-      reading => normalizeReading(reading) === normalizedAnswer,
+      reading => normalizeReading(reading) === readingKey(normalizedAnswer),
     )
   );
 };

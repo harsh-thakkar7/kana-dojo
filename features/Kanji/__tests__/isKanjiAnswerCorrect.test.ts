@@ -9,6 +9,13 @@ const kanji = {
   onyomi: ['カン kan'],
 } as IKanjiObj;
 
+const nichii = {
+  kanjiChar: '日',
+  meanings: ['day', 'sun'],
+  kunyomi: ['hi ひ', '-bi -び', '-ka -か'],
+  onyomi: ['nichi ニチ', 'jitsu ジツ'],
+} as IKanjiObj;
+
 describe('isKanjiAnswerCorrect', () => {
   it('normalizes meaning case and whitespace', () => {
     expect(isKanjiAnswerCorrect(kanji, ' china ', false)).toBe(true);
@@ -93,14 +100,35 @@ describe('isKanjiAnswerCorrect', () => {
     expect(isKanjiAnswerCorrect(prefixedReading, 'speak', true)).toBe(false);
   });
 
-  it.each([' 漢 ', ' から ', ' カン '])(
-    'normalizes reverse answer %s',
+  it.each([' 漢 ', ' から ', ' カン ', 'かん', 'kan'])(
+    'normalizes reverse reading answer %s',
     answer => {
       expect(isKanjiAnswerCorrect(kanji, answer, true)).toBe(true);
     },
   );
 
-  it.each(['', 'China', 'かん'])('rejects invalid reverse answer %s', answer => {
-    expect(isKanjiAnswerCorrect(kanji, answer, true)).toBe(false);
+  it.each(['', 'China', 'そう'])(
+    'rejects invalid reverse answer %s',
+    answer => {
+      expect(isKanjiAnswerCorrect(kanji, answer, true)).toBe(false);
+    },
+  );
+
+  it.each(['にち', 'ニチ', 'nichi', 'じつ', 'ジツ', 'jitsu'])(
+    'accepts either token or script of a romaji-first reading: %s',
+    answer => {
+      expect(isKanjiAnswerCorrect(nichii, answer, true)).toBe(true);
+    },
+  );
+
+  it('accepts the hiragana counterpart of a kanji-first reading', () => {
+    // The stored reading is "カン kan" (kana first); the romaji token "kan"
+    // is the same reading as カン and must be accepted too.
+    expect(isKanjiAnswerCorrect(kanji, 'kan', true)).toBe(true);
+  });
+
+  it('rejects a reading that does not belong to the kanji', () => {
+    expect(isKanjiAnswerCorrect(nichii, 'つ', true)).toBe(false);
+    expect(isKanjiAnswerCorrect(nichii, 'かん', true)).toBe(false);
   });
 });
