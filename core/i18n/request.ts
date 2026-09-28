@@ -1,33 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
-
-/**
- * List of translation namespaces
- * Each namespace corresponds to a JSON file in locales/{lang}/
- */
-const NAMESPACES = [
-  'common',
-  'navigation',
-  'kana',
-  'kanji',
-  'vocabulary',
-  'achievements',
-  'statistics',
-  'settings',
-  'errors',
-  'menuInfo',
-  'blog',
-  'translator',
-  'metadata',
-  'faq',
-  'practiceLanding',
-  'welcome',
-  'experiments',
-  'legal',
-  'kanaChart',
-  'conjugator',
-  'resources',
-] as const;
+import { NAMESPACES } from './namespaces';
 
 // Cache for loaded messages to avoid re-importing in dev
 const messageCache = new Map<string, Record<string, unknown>>();
@@ -36,7 +9,7 @@ export default getRequestConfig(async ({ locale }) => {
   // Ensure locale is always defined and valid
   const validLocale =
     locale &&
-      routing.locales.includes(locale as (typeof routing.locales)[number])
+    routing.locales.includes(locale as (typeof routing.locales)[number])
       ? locale
       : routing.defaultLocale;
 
